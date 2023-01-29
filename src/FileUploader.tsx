@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Description,
   DescriptionWrapper,
@@ -23,6 +24,9 @@ type Props = {
   disabled?: boolean | false;
   label?: string | undefined;
   multiple?: boolean | false;
+  maxSizeErrorMsg?: string;
+  minSizeErrorMsg?: string;
+  typeErrorMsg?: string;
   onSizeError?: (arg0: string) => void;
   onTypeError?: (arg0: string) => void;
   onDrop?: (arg0: File | Array<File>) => void;
@@ -37,6 +41,7 @@ type Props = {
  * @param currFile - The uploaded file
  * @param uploaded - boolean to check if the file uploaded or not yet
  * @param typeError - boolean to check if the file has type errors
+ * @param typeErrorMsg - msg to show if the file has type errors
  * @param disabled - boolean to check if input is disabled
  * @param label - string to add custom label
  * @returns JSX Element
@@ -48,11 +53,12 @@ const drawDescription = (
   currFile: Array<File> | File | null,
   uploaded: boolean,
   typeError: boolean,
+  typeErrorMsg: string | undefined,
   disabled: boolean | undefined,
   label: string | undefined
 ) => {
   return typeError ? (
-    <span>File type/size error, Hovered on types!</span>
+    <span>{typeErrorMsg}</span>
   ) : (
     <Description>
       {disabled ? (
@@ -72,7 +78,7 @@ const drawDescription = (
         </>
       ) : (
         <>
-          <span>Uploaded Successfully!</span> Upload another?
+          <span></span>
         </>
       )}
     </Description>
@@ -121,7 +127,10 @@ const FileUploader: React.FC<Props> = (props: Props): JSX.Element => {
     label,
     multiple,
     onDraggingStateChange,
-    dropMessageStyle
+    dropMessageStyle,
+    maxSizeErrorMsg,
+    minSizeErrorMsg,
+    typeErrorMsg
   } = props;
   const labelRef = useRef<HTMLLabelElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -133,17 +142,17 @@ const FileUploader: React.FC<Props> = (props: Props): JSX.Element => {
     if (types && !checkType(file, types)) {
       // types included and type not in them
       setError(true);
-      if (onTypeError) onTypeError('File type is not supported');
+      if (onTypeError) onTypeError(typeErrorMsg);
       return false;
     }
     if (maxSize && getFileSizeMB(file.size) > maxSize) {
       setError(true);
-      if (onSizeError) onSizeError('File size is too big');
+      if (onSizeError) onSizeError(maxSizeErrorMsg);
       return false;
     }
     if (minSize && getFileSizeMB(file.size) < minSize) {
       setError(true);
-      if (onSizeError) onSizeError('File size is too small');
+      if (onSizeError) onSizeError(minSizeErrorMsg);
       return false;
     }
     return true;
@@ -239,7 +248,14 @@ const FileUploader: React.FC<Props> = (props: Props): JSX.Element => {
         <>
           <ImageAdd />
           <DescriptionWrapper error={error}>
-            {drawDescription(currFiles, uploaded, error, disabled, label)}
+            {drawDescription(
+              currFiles,
+              uploaded,
+              error,
+              typeErrorMsg,
+              disabled,
+              label
+            )}
             <DrawTypes types={types} minSize={minSize} maxSize={maxSize} />
           </DescriptionWrapper>
         </>
