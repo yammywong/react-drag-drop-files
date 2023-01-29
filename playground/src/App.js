@@ -32,6 +32,10 @@ function App() {
         onDrop={onDrop}
         onSelect={onSelect}
         label="Upload file here"
+        uploadedLabel="test3"
+        typeErrorMsg="test2"
+        maxSizeErrorMsg="test"
+        maxSize='4'
         dropMessageStyle={{backgroundColor: 'red'}}
         multiple
       />

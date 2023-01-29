@@ -23,12 +23,13 @@ type Props = {
   fileOrFiles?: Array<File> | File | null;
   disabled?: boolean | false;
   label?: string | undefined;
+  uploadedLabel?: string;
   multiple?: boolean | false;
-  maxSizeErrorMsg?: string;
-  minSizeErrorMsg?: string;
-  typeErrorMsg?: string;
-  onSizeError?: (arg0: string) => void;
-  onTypeError?: (arg0: string) => void;
+  maxSizeErrorMsg?: string | undefined;
+  minSizeErrorMsg?: string | undefined;
+  typeErrorMsg?: string | undefined;
+  onSizeError?: (arg0: string  | undefined) => void;
+  onTypeError?: (arg0: string  | undefined) => void;
   onDrop?: (arg0: File | Array<File>) => void;
   onSelect?: (arg0: File | Array<File>) => void;
   handleChange?: (arg0: File | Array<File> | File) => void;
@@ -44,6 +45,7 @@ type Props = {
  * @param typeErrorMsg - msg to show if the file has type errors
  * @param disabled - boolean to check if input is disabled
  * @param label - string to add custom label
+ * @param uploadedLabel - string to add custom label after uploading
  * @returns JSX Element
  *
  * @internal
@@ -55,7 +57,8 @@ const drawDescription = (
   typeError: boolean,
   typeErrorMsg: string | undefined,
   disabled: boolean | undefined,
-  label: string | undefined
+  label: string | undefined,
+  uploadedLabel: string | undefined,
 ) => {
   return typeError ? (
     <span>{typeErrorMsg}</span>
@@ -78,7 +81,7 @@ const drawDescription = (
         </>
       ) : (
         <>
-          <span></span>
+          <span>{uploadedLabel}</span>
         </>
       )}
     </Description>
@@ -125,6 +128,7 @@ const FileUploader: React.FC<Props> = (props: Props): JSX.Element => {
     onDrop,
     disabled,
     label,
+    uploadedLabel,
     multiple,
     onDraggingStateChange,
     dropMessageStyle,
@@ -254,7 +258,8 @@ const FileUploader: React.FC<Props> = (props: Props): JSX.Element => {
               error,
               typeErrorMsg,
               disabled,
-              label
+              label,
+              uploadedLabel
             )}
             <DrawTypes types={types} minSize={minSize} maxSize={maxSize} />
           </DescriptionWrapper>
